@@ -6,6 +6,7 @@
     <title>Significance Analysis Tool</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.16.9/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jstat/1.9.4/jstat.min.js"></script>
     <style>
         .top-bar {
     padding: 4px;
@@ -188,8 +189,7 @@ function handleSubmit(event) {
 
 function categorizeData(data) {
     if (data.every(value => !isNaN(value))) {
-        const numericalData = data.map((value, index) => ({ value: parseFloat(value), index})).filter(item => ! isNaN(item.value));
-
+        const numericalData = data.map((value, index) => ({ value: parseFloat(value), index })).filter(item => !isNaN(item.value));
         const quartiles = calculateQuartiles(numericalData.map(item => item.value));
 
         const categories = numericalData.map(item => {
@@ -199,13 +199,15 @@ function categorizeData(data) {
             else if (item.value <= quartiles[1]) category = 'medium';
             else if (item.value <= quartiles[2]) category = 'high';
             else category = 'very high';
-            return { category, index: item.index};
+            return { category, index: item.index };
         });
+
         const categorizedData = new Array(data.length);
         categories.forEach(item => {
             categorizedData[item.index] = item.category;
         });
-        return categorizedData
+
+        return categorizedData;
     }
     return data;
 }
@@ -243,12 +245,12 @@ function performChiSquareTest(data1, data2) {
     });
 
     const df = (rows.length - 1) * (cols.length - 1);
-    return chiSquareToPValue(chiSquare, df);
+    return 1 - chiSquareCDF(chiSquare, df);
 }
 
-function chiSquareToPValue(chiSquare, df) {
-    // Approximation for p-value based on chi-square and degrees of freedom
-    return (1 - Math.exp(-0.5 * chiSquare)).toFixed(4);
+function chiSquareCDF(x, df) {
+    // Using jStat for chi-square CDF
+    return jStat.chisquare.cdf(x, df);
 }
 
 function displayCategorizedData(column1Name, data1, column2Name, data2) {
@@ -275,19 +277,6 @@ function displayCategorizedData(column1Name, data1, column2Name, data2) {
         column2Data.appendChild(li);
     });
 }
-    </script>
-    <script>
-        function switchPage() {
-            const dropdown= document.getElementById('pageSwitcher');
-            const selectedPage = dropdown.value;
-            window.location.href = selectedPage;
-        }
-
-        window.onload = function() {
-            const currentPage = window.location.pathname.split('/').pop();
-        
-            document.getElementById('pageSwitcher').value = currentPage;
-        }
     </script>
 </body>
 </html>
