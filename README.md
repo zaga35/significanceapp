@@ -1,5 +1,5 @@
 # Self-service Significance Analysis App
-This is designed to help non-technical teams (e.g. sales, marketing, comms.) identify statistically meaningful relationships in categorical and numerical data.
+This is designed to help non-technical teams (e.g. HR, sales, marketing, comms.) identify statistically meaningful relationships in categorical and numerical data. 
 
 It performs a Chi-squared significance test and either rejects or fails to reject the null hypothesis based on the p-value returned.
 
